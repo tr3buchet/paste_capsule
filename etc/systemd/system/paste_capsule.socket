@@ -1,0 +1,8 @@
+[Unit]
+Description=gunicorn socket for paste_capsule
+
+[Socket]
+ListenStream=/run/paste_capsule.sock
+
+[Install]
+WantedBy=sockets.target

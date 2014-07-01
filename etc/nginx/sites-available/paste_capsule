@@ -1,0 +1,10 @@
+upstream paste_capsule {
+    server unix:/run/paste_capsule.sock fail_timeout=0;
+}
+
+server {
+    server_name ex.whateverwhere.bird;
+    location / {
+        proxy_pass   http://paste_capsule;
+    }
+}

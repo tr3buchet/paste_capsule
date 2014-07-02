@@ -14,11 +14,14 @@ to play around
 ## install
 
 ### app and dependencies
+substitute `virtualenv` for `mkvirtualenv` below if not using virtualenv wrapper.
+depending on your user and permissions you may have to `sudo` or do some `chown`ing
 ```
 git clone https://github.com/tr3buchet/paste_capsule.git
 cd paste_capsule
 mkdir /opt
 mkvirtualenv /opt/paste_capsule
+. /opt/paste_capsule/bin/activate
 python setup.py install
 ```
 
@@ -35,6 +38,8 @@ cp etc/nginx/sites-available/paste_capsule /etc/nginx/sites-available/paste_caps
 # edit server_name in the server block to the hostname set in /etc/paste_capsule.conf
 vi /etc/nginx/sites-available/paste_capsule
 ln -s /etc/nginx/sites-available/paste_capsule /etc/nginx/sites-enabled/paste_capsule
+# reload nginx config
+systemctl reload nginx
 ```
 
 ### systemd gunicorn
@@ -44,6 +49,10 @@ cp etc/systemd/system/paste_capsule.service /etc/systemd/system/paste_capsule.se
 
 # edit paste_capsule.service and set the user and group for permissions
 vi /etc/systemd/system/paste_capsule.service
+
+# enable and start the socket
+systemctl enable paste_capsule.socket
+systemctl start paste_capsule.socket
 ```
 
 ### redis
@@ -56,6 +65,16 @@ your desires
 unixsocket /run/redis.sock
 unixsocketperm 777
 ```
+restart redis
+```
+systemctl restart redis-server
+```
+if you look in the paste_capsule code you'll see a description of the redis schema.
+also, paste_capsule uses db 3. you can completely reset the app, deleting all data,
+by running `flushdb` from `redis-cli`. there are structures added to the redis schema
+for the purposes of cleanly deleting keys later. i'll probably rewrite this such that
+the app is a little more fault tolerant of missing pastes that have not been deleted
+cleanly
 
 ### permissions
 make sure the user/group you set up in `/etc/systemd/system/paste_capsule.service` has

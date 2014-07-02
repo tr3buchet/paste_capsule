@@ -1,0 +1,2 @@
+recursive-include paste_capsule/templates *
+recursive-include paste_capsule/static *

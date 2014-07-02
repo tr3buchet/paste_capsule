@@ -6,7 +6,8 @@ Type=forking
 PIDFile=/opt/paste_capsule/paste_capsule.pid
 User=www-data
 Group=www-data
-ExecStart=/opt/paste_capsule/bin/gunicorn -k gevent --error-logfile - --access-logfile - -p /opt/paste_capsule/paste_capsule.pid paste_capsule.paste_capsule:app
+# Environment="VAR1=word1 word2" VAR2=word3 "VAR3=$word 5 6"
+Environment=PASTE_CAPSULE_HOSTNAME=host.name.com
+ExecStart=/opt/paste_capsule/bin/gunicorn -k gevent --error-logfile - --access-logfile - -p /opt/paste_capsule/paste_capsule.pid 'paste_capsule.paste_capsule:create_app()'
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s QUIT $MAINPID
-PrivateTmp=true

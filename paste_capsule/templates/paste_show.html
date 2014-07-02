@@ -1,0 +1,30 @@
+{% extends "bootstrap/base.html" %}
+
+{% block metas -%}
+{{ super() }}
+{% include "favicons.html" %}
+{%- endblock %}
+
+{% block styles -%}
+{{ super() }}
+    <style>
+        @media (min-width: 981px) { body { padding-top: 60px; } }
+    </style>
+{%- endblock %}
+
+{% block title %}paste capsule - {{ tagname }} - {{ paste_uuid }}{% endblock %}
+{% block navbar -%}
+    <div class="navbar navbar-fixed-top">
+        <ol class="breadcrumb">
+            <li><a href="{{ url_for('tag_index') }}">home</a></li>
+            <li><a href="{{ url_for('tag_show', tagname=tagname) }}">{{ tagname }}</a></li>
+            <li class="active">{{ paste_uuid }}</li>
+        </ol>
+    </div>
+{%- endblock %}
+
+{% block content -%}
+    <pre>
+    {{ paste }}
+    </pre>
+{%- endblock %}

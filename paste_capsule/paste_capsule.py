@@ -20,13 +20,9 @@ import datetime
 import shortuuid
 import ConfigParser
 
-from flask import Flask
-from flask import request
-from flask import Response
-from flask import url_for
-
-app = Flask(__name__)
-app.debug = True
+import flask
+import flask_appconfig
+import flask_bootstrap
 
 r = redis.StrictRedis(unix_socket_path='/run/redis.sock', db=3)
 
@@ -43,22 +39,7 @@ r = redis.StrictRedis(unix_socket_path='/run/redis.sock', db=3)
 #    paste:<uuid>
 
 
-def get_host_config():
-    config_parser = ConfigParser.RawConfigParser(
-        defaults={'hostname': 'host.name.com'})
-    # read from ~/.gister if it exists else use defaults
-    if not config_parser.read('/etc/paste_capsule.conf'):
-        raise Exception('could not read hostname from /etc/paste_capsule.conf')
-    return config_parser.get('paste_capsule', 'hostname')
-
-
-HOST = get_host_config()
-URL = 'http://%s' % HOST
-#r = redis.StrictRedis(host='localhost', port=6379, db=3)
-
-
-@app.route('/', methods=['get'])
-def index():
+def tag_index():
     with r.pipeline() as pipe:
         pipe.zrange('tags', 0, -1)
         pipe.zcard('tags')
@@ -66,11 +47,11 @@ def index():
     if not num_tags:
         return 'no tags found'
     urls = [linky('tag', tag, tagname=tag) for tag in tag_list]
+    return flask.render_template('tag_index.html')
     return '%s tags:<br>\n%s' % (num_tags, '<br>\n'.join(urls))
 
 
-@app.route('/tag/<tagname>', methods=['get'])
-def tag(tagname):
+def get_tag(tagname):
     paste_uuid_list = r.zrange('tag:%s' % tagname, 0, -1)
     if not paste_uuid_list:
         return 'tag not found'
@@ -86,15 +67,8 @@ def tag(tagname):
                                           '<br>\n'.join(urls))
 
 
-@app.route('/paste/<paste_uuid>', methods=['get'])
-def paste(paste_uuid):
-    p = r.get('paste:%s' % paste_uuid)
-    return Response(p, mimetype='text/plain')
-
-
-@app.route('/', methods=['post'])
-def post():
-    params = request.get_json()
+def create_paste():
+    params = flask.request.get_json()
     data = params['data']
     tagname = params.get('tag', 'no-tag')
     paste_uuid = shortuuid.uuid()
@@ -113,18 +87,14 @@ def post():
         pipe.set('paste:%s' % paste_uuid, data)
         pipe.execute()
 
-    return URL + url_for('paste', paste_uuid=paste_uuid)
+    return url() + flask.url_for('paste', paste_uuid=paste_uuid)
 
 
-def linky(resource, s, **kwargs):
-    return '<a href="%s%s">%s</a>' % (URL, url_for(resource, **kwargs), s)
+def get_paste(paste_uuid):
+    p = r.get('paste:%s' % paste_uuid)
+    return flask.Response(p, mimetype='text/plain')
 
 
-def htime(ts):
-    return datetime.datetime.fromtimestamp(ts)
-
-
-@app.route('/delete/<paste_uuid>', methods=['get'])
 def delete_paste(paste_uuid):
     # get the tagname info related to this paste_uuid
     tagname = r.get('paste_tag:%s' % paste_uuid)
@@ -155,3 +125,33 @@ def delete_paste(paste_uuid):
         msg += 'remove tagname from tags |%s|'
     app.logger.debug(msg % x)
     return '|%s| deleted' % paste_uuid
+
+
+def linky(resource, s, **kwargs):
+    return '<a href="%s%s">%s</a>' % (url(),
+                                      flask.url_for(resource, **kwargs), s)
+
+
+def htime(ts):
+    return datetime.datetime.fromtimestamp(ts)
+
+
+def url():
+    app = flask.current_app
+    return 'http://%s' % app.config['HOSTNAME']
+
+
+def create_app(configfile=None):
+    app = flask.Flask('paste_capsule')
+    flask_appconfig.AppConfig(app, configfile)
+    flask_bootstrap.Bootstrap(app)
+
+    app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
+    app.add_url_rule('/tag/<tagname>', 'get_tag', get_tag, methods=['get'])
+    app.add_url_rule('/paste', 'create_paste', create_paste, methods=['post'])
+    app.add_url_rule('/paste/<paste_uuid>', 'get_paste', get_paste,
+                     methods=['get'])
+    app.add_url_rule('/paste/<paste_uuid>', 'delete_paste', delete_paste,
+                     methods=['delete'])
+
+    return app

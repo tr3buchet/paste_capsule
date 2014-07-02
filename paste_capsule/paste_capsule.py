@@ -145,8 +145,8 @@ def create_app(*args, **kwargs):
     app = flask.Flask('paste_capsule')
     flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)
-    app.logger.debug(str(args))
-    app.logger.debug(str(kwargs))
+    app.logger.info(str(args))
+    app.logger.info(str(kwargs))
 
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
     app.add_url_rule('/tag/<tagname>', 'get_tag', get_tag, methods=['get'])

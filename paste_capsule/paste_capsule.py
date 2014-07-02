@@ -28,7 +28,7 @@ from flask import url_for
 app = Flask(__name__)
 app.debug = True
 
-HOST = 'host.name.com'
+HOST = get_host_config()
 URL = 'http://%s' % HOST
 #r = redis.StrictRedis(host='localhost', port=6379, db=3)
 r = redis.StrictRedis(unix_socket_path='/run/redis.sock', db=3)

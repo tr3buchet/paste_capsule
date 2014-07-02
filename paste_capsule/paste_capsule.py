@@ -141,11 +141,12 @@ def url():
     return 'http://%s' % app.config['HOSTNAME']
 
 
-def create_app(configfile=None, *args):
+def create_app(*args, **kwargs):
     app = flask.Flask('paste_capsule')
-    flask_appconfig.AppConfig(app, configfile)
+    flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)
     app.logger.debug('%s' % args)
+    app.logger.debug('%s' % kwargs)
 
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
     app.add_url_rule('/tag/<tagname>', 'get_tag', get_tag, methods=['get'])

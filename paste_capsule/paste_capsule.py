@@ -28,9 +28,6 @@ from flask import url_for
 app = Flask(__name__)
 app.debug = True
 
-HOST = get_host_config()
-URL = 'http://%s' % HOST
-#r = redis.StrictRedis(host='localhost', port=6379, db=3)
 r = redis.StrictRedis(unix_socket_path='/run/redis.sock', db=3)
 
 ###### REDIS SCHEMA ######
@@ -53,6 +50,11 @@ def get_host_config():
     if not config_parser.read('/etc/paste_capsule.conf'):
         raise Exception('could not read hostname from /etc/paste_capsule.conf')
     return config_parser.get('paste_capsule', 'hostname')
+
+
+HOST = get_host_config()
+URL = 'http://%s' % HOST
+#r = redis.StrictRedis(host='localhost', port=6379, db=3)
 
 
 @app.route('/', methods=['get'])

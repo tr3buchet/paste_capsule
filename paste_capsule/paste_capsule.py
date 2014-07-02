@@ -18,18 +18,20 @@ import redis
 import time
 import datetime
 import shortuuid
+import ConfigParser
 
 from flask import Flask
 from flask import request
 from flask import Response
 from flask import url_for
+
 app = Flask(__name__)
 app.debug = True
 
 HOST = 'host.name.com'
 URL = 'http://%s' % HOST
 #r = redis.StrictRedis(host='localhost', port=6379, db=3)
-r = redis.StrictRedis(unix_socket_path='/var/run/redis.sock', db=3)
+r = redis.StrictRedis(unix_socket_path='/run/redis.sock', db=3)
 
 ###### REDIS SCHEMA ######
 # lexicographically sorted set of tags
@@ -42,6 +44,15 @@ r = redis.StrictRedis(unix_socket_path='/var/run/redis.sock', db=3)
 #    paste_tag:<uuid>
 # each paste
 #    paste:<uuid>
+
+
+def get_host_config():
+    config_parser = ConfigParser.RawConfigParser(
+        defaults={'hostname': 'host.name.com'})
+    # read from ~/.gister if it exists else use defaults
+    if not config_parser.read('/etc/paste_capsule.conf'):
+        raise Exception('could not read hostname from /etc/paste_capsule.conf')
+    return config_parser.get('paste_capsule', 'hostname')
 
 
 @app.route('/', methods=['get'])

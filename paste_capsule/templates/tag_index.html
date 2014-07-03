@@ -26,7 +26,7 @@
     <h5>{{ num_tags }} tags found</h5>
     <div class="list-group">
         {%- for tag, num in tags.iteritems() %}
-        <a href="#" class="list-group-item">{{ tag }}</a><span class="badge">{{ num }}</span>
+        <a href="#" class="list-group-item">{{ tag }}<span class="badge">{{ num }}</span></a>
         {%- endfor %}
     </div>
 {%- endblock %}

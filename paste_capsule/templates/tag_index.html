@@ -23,13 +23,10 @@
 {%- endblock %}
 
 {% block content -%}
-    <h3>{{ num_tags }} found</h3>
-    <ul class="list-group">
+    <h5>{{ num_tags }} tags found</h5>
+    <div class="list-group">
         {%- for tag, num in tags.iteritems() %}
-        <li class="list-group-item">
-            <span class="badge">{{ num }}</span>
-            {{ tag }}
-        </li>
+        <a href="#" class="list-group-item">{{ tag }}</a><span class="badge">{{ num }}</span>
         {%- endfor %}
-    </ul>
+    </div>
 {%- endblock %}

@@ -40,15 +40,11 @@ r = redis.StrictRedis(unix_socket_path='/run/redis.sock', db=3)
 
 
 def tag_index():
-    with r.pipeline() as pipe:
-        pipe.zrange('tags', 0, -1)
-        tag_list = pipe.execute()
+    tag_list = r.zrange('tags', 0, -1)
     with r.pipeline() as pipe:
         for tag in tag_list:
             pipe.zcard('tag:%s' % tag)
         tag_num_list = pipe.execute()
-    print tag_list
-    print tag_num_list
     tags = dict(zip(tag_list, tag_num_list))
     return flask.render_template('tag_index.html', tags=tags)
 

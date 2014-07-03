@@ -31,5 +31,6 @@ setup(
     keywords='gist gists paste pastes capsule',
     packages=find_packages(),
     include_package_data=True,
+    package_data={'paste_capsule': ['templates/*', 'static/*']},
     license='Apache Software License',
     url='https://github.com/tr3buchet/paste_capsule')

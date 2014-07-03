@@ -142,8 +142,9 @@ def url():
         return 'http://127.0.0.1:8000'
 
 
-def create_app(*args, **kwargs):
+def create_app(debug=False, *args, **kwargs):
     app = flask.Flask('paste_capsule')
+    app.debug = debug
     flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)
 

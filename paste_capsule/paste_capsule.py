@@ -144,7 +144,10 @@ def htime(ts):
 
 def url():
     app = flask.current_app
-    return 'http://%s' % app.config['HOSTNAME']
+    try:
+        return 'http://%s' % app.config['HOSTNAME']
+    except:
+        return 'http://127.0.0.1:8000'
 
 
 def create_app(*args, **kwargs):

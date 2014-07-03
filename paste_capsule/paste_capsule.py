@@ -75,6 +75,7 @@ def get_tag(tagname):
 
 
 def create_paste():
+    print 'create_paste'
     return 'asdfasdf'
     params = flask.request.get_json()
     data = params['data']

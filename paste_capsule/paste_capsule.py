@@ -52,7 +52,8 @@ def tag_index():
     print tag_list
     print num_tags
     print tags
-    return flask.render_template('tag_index.html', tags=tags)
+    return flask.render_template('tag_index.html', num_tags=num_tags,
+                                 tags=tags)
     if not num_tags:
         return 'no tags found'
     urls = [linky('tag', tag, tagname=tag) for tag in tag_list]

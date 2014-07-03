@@ -76,14 +76,13 @@ def get_tag(tagname):
 
 
 def create_paste():
-    print 'create_paste'
-    return 'asdfasdf'
     params = flask.request.get_json()
     data = params['data']
     tagname = params.get('tag', 'no-tag')
     paste_uuid = shortuuid.uuid()
     ts = time.time()
     print '%s %s %s' % (data, tagname, ts)
+    return 'asdfasd'
 
     with r.pipeline() as pipe:
         # add tagname to lexicographically sorted tags set

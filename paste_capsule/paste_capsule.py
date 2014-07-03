@@ -89,7 +89,7 @@ def paste_create():
 
 def paste_show(paste_uuid):
     p = r.get('paste:%s' % paste_uuid)
-    return flask.render_template('paste_show', paste=p)
+    return flask.render_template('paste_show.html', paste=p)
 #    return flask.Response(p, mimetype='text/plain')
 
 

@@ -23,10 +23,10 @@
 {%- endblock %}
 
 {% block content -%}
-    <h5>{{ len(pastes) }} pastes found</h5>
+    <h5>{{ pastes|length }} pastes found</h5>
     <div class="list-group">
         {%- for paste_uuid, ts in pastes.iteritems() %}
-        <a href="{{ url_for('paste_show', paste_uuid=paste_uuid) }}" class="list-group-item">{{ htime(ts) }} - {{ paste_uuid }}<span class="badge">{{ num }}</span></a>
+        <a href="{{ url_for('paste_show', paste_uuid=paste_uuid) }}" class="list-group-item">{{ ts }} - {{ paste_uuid }}<span class="badge">{{ num }}</span></a>
         {%- endfor %}
     </div>
 {%- endblock %}

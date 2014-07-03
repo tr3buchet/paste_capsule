@@ -17,7 +17,7 @@
     <div class="navbar navbar-fixed-top">
         <ol class="breadcrumb">
             <li><a href="{{ url_for('tag_index') }}">home</a></li>
-            <li><a href="{{ url_for('tag_show', tagname) }}">{{ tagname }}</a></li>
+            <li><a href="{{ url_for('tag_show', tagname=tagname) }}">{{ tagname }}</a></li>
             <li class="active">{{ paste_uuid }}</li>
         </ol>
     </div>

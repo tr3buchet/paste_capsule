@@ -1,1 +1,2 @@
 recursive-include yourapplication/templates *
+recursive-include yourapplication/static *

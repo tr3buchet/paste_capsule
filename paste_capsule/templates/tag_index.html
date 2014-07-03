@@ -1,13 +1,21 @@
 {% extends "bootstrap/base.html" %}
-{% block title %}This is an example page{% endblock %}
+{% block title %}paste capsule{% endblock %}
 
 {% block navbar %}
-<div class="navbar navbar-fixed-top">
-  <!-- ... -->
-  blah blah
-</div>
+    <div class="navbar navbar-fixed-top">
+        <ol class="breadcrumb">
+            <li><a href="#">Home</a></li>
+            <li class="active">tag list</li>
+        </ol>
+    </div>
 {% endblock %}
 
 {% block content %}
-  <h1>Hello, Bootstrap</h1>
+    <ul class="list-group">
+        {% for tag, num in tags.iteritems() %}
+        <li class="list-group-item">
+            <span class="badge">{{ num }}</span>
+            {{ tag }}
+        </li>
+    </ul>
 {% endblock %}

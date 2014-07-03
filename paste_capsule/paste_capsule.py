@@ -151,7 +151,6 @@ def url():
 
 def create_app(*args, **kwargs):
     app = flask.Flask('paste_capsule')
-    app.debug = debug
     flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)
 

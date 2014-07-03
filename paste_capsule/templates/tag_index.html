@@ -1,28 +1,28 @@
 {% extends "bootstrap/base.html" %}
 
-{% block metas %}
+{% block metas -%}
 {{ super() }}
 {% include "favicons.html" %}
-{% endblock %}
+{%- endblock %}
 
-{% block styles %}
+{% block styles -%}
 {{ super() }}
     <style>
         @media (min-width: 981px) { body { padding-top: 60px; } }
     </style>
-{% endblock %}
+{%- endblock %}
 
 {% block title %}paste capsule{% endblock %}
-{% block navbar %}
+{% block navbar -%}
     <div class="navbar navbar-fixed-top">
         <ol class="breadcrumb">
             <li><a href="#">Home</a></li>
             <li class="active">tag list</li>
         </ol>
     </div>
-{% endblock %}
+{%- endblock %}
 
-{% block content %}
+{% block content -%}
     asdfasdfasdfasdf
     <ul class="list-group">
         {%- for tag, num in tags.iteritems() %}
@@ -32,4 +32,4 @@
         </li>
         {%- endfor %}
     </ul>
-{% endblock %}
+{%- endblock %}

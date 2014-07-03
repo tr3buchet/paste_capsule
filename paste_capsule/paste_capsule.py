@@ -95,7 +95,7 @@ def create_paste():
         pipe.set('paste:%s' % paste_uuid, data)
         pipe.execute()
 
-    return url() + flask.url_for('paste', paste_uuid=paste_uuid)
+    return url() + flask.url_for('get_paste', paste_uuid=paste_uuid)
 
 
 def get_paste(paste_uuid):

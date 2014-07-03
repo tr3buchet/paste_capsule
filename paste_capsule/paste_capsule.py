@@ -44,10 +44,10 @@ def tag_index():
         pipe.zrange('tags', 0, -1)
         pipe.zcard('tags')
         tag_list, num_tags = pipe.execute()
+    return flask.render_template('tag_index.html')
     if not num_tags:
         return 'no tags found'
     urls = [linky('tag', tag, tagname=tag) for tag in tag_list]
-    return flask.render_template('tag_index.html')
     return '%s tags:<br>\n%s' % (num_tags, '<br>\n'.join(urls))
 
 

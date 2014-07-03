@@ -30,5 +30,6 @@ setup(
                  'License :: OSI Approved :: Apache Software License'],
     keywords='gist gists paste pastes capsule',
     packages=find_packages(),
+    include_package_data=True,
     license='Apache Software License',
     url='https://github.com/tr3buchet/paste_capsule')

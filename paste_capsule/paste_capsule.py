@@ -64,7 +64,7 @@ def tag_show(tagname):
                                           '<br>\n'.join(urls))
 
 
-def create_paste():
+def paste_create():
     params = flask.request.get_json()
     data = params['data']
     tagname = params.get('tag', 'no-tag')
@@ -84,7 +84,7 @@ def create_paste():
         pipe.set('paste:%s' % paste_uuid, data)
         pipe.execute()
 
-    return url() + flask.url_for('get_paste', paste_uuid=paste_uuid)
+    return url() + flask.url_for('paste_show', paste_uuid=paste_uuid)
 
 
 def paste_show(paste_uuid):
@@ -146,7 +146,7 @@ def create_app(*args, **kwargs):
 
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
     app.add_url_rule('/tag/<tagname>', 'tag_show', tag_show, methods=['get'])
-    app.add_url_rule('/paste', 'create_paste', create_paste, methods=['post'])
+    app.add_url_rule('/paste', 'paste_create', paste_create, methods=['post'])
     app.add_url_rule('/paste/<paste_uuid>', 'paste_show', paste_show,
                      methods=['get'])
     app.add_url_rule('/paste/<paste_uuid>', 'delete_paste', delete_paste,

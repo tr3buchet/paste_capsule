@@ -50,7 +50,9 @@ def tag_index():
 
 
 def tag_show(tagname):
-    pastes = dict(r.zscan('tag:%s' % tagname, 0)[1])
+    pastes = dict((k, htime(ts))
+                  for k, ts in r.zscan('tag:%s' % tagname, 0)[1])
+    print pastes
     if not pastes:
         return 'tag not found'
     return flask.render_template('tag_show.html', tagname=tagname,

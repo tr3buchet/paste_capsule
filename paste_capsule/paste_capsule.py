@@ -80,6 +80,7 @@ def create_paste():
     tagname = params.get('tag', 'no-tag')
     paste_uuid = shortuuid.uuid()
     ts = time.time()
+    print '%s %s %s' % (data, tagname, ts)
 
     with r.pipeline() as pipe:
         # add tagname to lexicographically sorted tags set
@@ -152,8 +153,6 @@ def create_app(*args, **kwargs):
     app = flask.Flask('paste_capsule')
     flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)
-    app.logger.info(str(args))
-    app.logger.info(str(kwargs))
 
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
     app.add_url_rule('/tag/<tagname>', 'get_tag', get_tag, methods=['get'])

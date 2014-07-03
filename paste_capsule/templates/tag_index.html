@@ -5,6 +5,13 @@
 {% include "favicons.html" %}
 {% endblock %}
 
+{% block style %}
+{{ super() }}
+    <style>
+        @media (min-width: 981px) { body { padding-top: 60px; } }
+    </style>
+    {% endblock %}
+
 {% block title %}paste capsule{% endblock %}
 {% block navbar %}
     <div class="navbar navbar-fixed-top">
@@ -18,11 +25,11 @@
 {% block content %}
     asdfasdfasdfasdf
     <ul class="list-group">
-        {% for tag, num in tags.iteritems() %}
+        {%- for tag, num in tags.iteritems() %}
         <li class="list-group-item">
             <span class="badge">{{ num }}</span>
             {{ tag }}
         </li>
-        {% endfor %}
+        {%- endfor %}
     </ul>
 {% endblock %}

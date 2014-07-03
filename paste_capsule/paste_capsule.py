@@ -49,6 +49,7 @@ def tag_index():
             pipe.zcard('tag:%s' % tag)
         tag_num_list = pipe.execute()
     tags = dict(zip(tag_list, tag_num_list))
+    app.logger.info(str(tags))
     return flask.render_template('tag_index.html', tags=tags)
     if not num_tags:
         return 'no tags found'

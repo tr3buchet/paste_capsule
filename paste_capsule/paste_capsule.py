@@ -84,7 +84,7 @@ def paste_create():
         pipe.set('paste:%s' % paste_uuid, data)
         pipe.execute()
 
-    return url() + flask.url_for('paste_show', paste_uuid=paste_uuid)
+    return url() + flask.url_for('paste_show', paste_uuid=paste_uuid) + '\n'
 
 
 def paste_show(paste_uuid):

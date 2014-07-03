@@ -48,8 +48,7 @@ def tag_index():
             pipe.zcard('tag:%s' % tag)
         tag_num_list = pipe.execute()
     tags = dict(zip(tag_list, tag_num_list))
-    return 'hello there'
-    return flask.render_template('tag_index.html', tags=tags)
+    return flask.render_template('templates/tag_index.html', tags=tags)
 
 
 def tag_show(tagname):

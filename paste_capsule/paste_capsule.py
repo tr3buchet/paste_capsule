@@ -109,7 +109,6 @@ def delete_paste(paste_uuid):
     tagname = r.get('paste_tag:%s' % paste_uuid)
     num_pastes = r.zcard('tag:%s' % tagname)
     msg = 'delete |%s| with tag |%s| which has |%s| pastes'
-    app.logger.debug(msg % (tagname, num_pastes))
     with r.pipeline() as pipe:
         # remove paste_uuid from tag's set of paste_uuids
         pipe.zrem('tag:%s' % tagname, paste_uuid)
@@ -132,7 +131,6 @@ def delete_paste(paste_uuid):
            'remove the paste |%s|\n')
     if len(x) == 5:
         msg += 'remove tagname from tags |%s|'
-    app.logger.debug(msg % x)
     return '|%s| deleted' % paste_uuid
 
 

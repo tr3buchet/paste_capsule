@@ -149,10 +149,9 @@ def url():
     return 'http://%s' % app.config['HOSTNAME']
 
 
-def create_app(debug=False, *args, **kwargs):
+def create_app(*args, **kwargs):
     app = flask.Flask('paste_capsule')
     app.debug = debug
-    print app.debug
     flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)
 
@@ -165,3 +164,7 @@ def create_app(debug=False, *args, **kwargs):
                      methods=['delete'])
 
     return app
+
+
+if __name__ == '__main__':
+    create_app().run(debug=True)

@@ -148,8 +148,9 @@ def url():
     return 'http://%s' % app.config['HOSTNAME']
 
 
-def create_app(*args, **kwargs):
+def create_app(debug=False, *args, **kwargs):
     app = flask.Flask('paste_capsule')
+    app.debug = debug
     flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)
 

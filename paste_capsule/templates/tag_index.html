@@ -1,6 +1,11 @@
 {% extends "bootstrap/base.html" %}
-{% block title %}paste capsule{% endblock %}
 
+{% block metas %}
+{{ super() }}
+{% include "favicons.html" %}
+{% endblock %}
+
+{% block title %}paste capsule{% endblock %}
 {% block navbar %}
     <div class="navbar navbar-fixed-top">
         <ol class="breadcrumb">

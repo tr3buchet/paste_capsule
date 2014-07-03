@@ -48,10 +48,10 @@ def tag_index():
         for tag in tag_list:
             pipe.zcard('tag:%s' % tag)
         tag_num_list = pipe.execute()
-    tags = dict(zip(tag_list, tag_num_list))
-    print tags
-    app.logger.info(str(tags))
-    return flask.render_template('tag_index.html', tags=tags)
+#    tags = dict(zip(tag_list, tag_num_list))
+#    print tags
+#    app.logger.info(str(tags))
+#    return flask.render_template('tag_index.html', tags=tags)
     if not num_tags:
         return 'no tags found'
     urls = [linky('tag', tag, tagname=tag) for tag in tag_list]

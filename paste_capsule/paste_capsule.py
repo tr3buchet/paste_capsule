@@ -42,33 +42,21 @@ r = redis.StrictRedis(unix_socket_path='/run/redis.sock', db=3)
 def tag_index():
     with r.pipeline() as pipe:
         pipe.zrange('tags', 0, -1)
-        pipe.zcard('tags')
-        tag_list, num_tags = pipe.execute()
+        tag_list = pipe.execute()
     with r.pipeline() as pipe:
         for tag in tag_list:
             pipe.zcard('tag:%s' % tag)
         tag_num_list = pipe.execute()
     tags = dict(zip(tag_list, tag_num_list))
-    print tag_list
-    print num_tags
-    print tags
-    return flask.render_template('tag_index.html', num_tags=num_tags,
-                                 tags=tags)
-    if not num_tags:
-        return 'no tags found'
-    urls = [linky('tag', tag, tagname=tag) for tag in tag_list]
-    return '%s tags:<br>\n%s' % (num_tags, '<br>\n'.join(urls))
+    return flask.render_template('tag_index.html', tags=tags)
 
 
-def get_tag(tagname):
-    paste_uuid_list = r.zrange('tag:%s' % tagname, 0, -1)
-    if not paste_uuid_list:
+def tag_show(tagname):
+    pastes = dict(r.zscan('tag:%s' % tagname, 0)[1])
+    if not pastes:
         return 'tag not found'
-    with r.pipeline() as pipe:
-        ts_list = []
-        for paste_uuid in paste_uuid_list:
-            pipe.zscore('pastes', paste_uuid)
-        ts_list = pipe.execute()
+    return flask.render_template('tag_show.html', tagname=tagname,
+                                                  pastes=pastes)
     urls = [linky('paste', '%s - %s' % (htime(ts), paste_uuid),
                   paste_uuid=paste_uuid)
             for paste_uuid, ts in zip(paste_uuid_list, ts_list)]
@@ -99,7 +87,7 @@ def create_paste():
     return url() + flask.url_for('get_paste', paste_uuid=paste_uuid)
 
 
-def get_paste(paste_uuid):
+def paste_show(paste_uuid):
     p = r.get('paste:%s' % paste_uuid)
     return flask.Response(p, mimetype='text/plain')
 
@@ -157,9 +145,9 @@ def create_app(*args, **kwargs):
     flask_bootstrap.Bootstrap(app)
 
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
-    app.add_url_rule('/tag/<tagname>', 'get_tag', get_tag, methods=['get'])
+    app.add_url_rule('/tag/<tagname>', 'tag_show', tag_show, methods=['get'])
     app.add_url_rule('/paste', 'create_paste', create_paste, methods=['post'])
-    app.add_url_rule('/paste/<paste_uuid>', 'get_paste', get_paste,
+    app.add_url_rule('/paste/<paste_uuid>', 'paste_show', paste_show,
                      methods=['get'])
     app.add_url_rule('/paste/<paste_uuid>', 'delete_paste', delete_paste,
                      methods=['delete'])

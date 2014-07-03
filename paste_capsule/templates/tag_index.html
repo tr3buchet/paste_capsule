@@ -23,7 +23,7 @@
 {%- endblock %}
 
 {% block content -%}
-    <h5>{{ num_tags }} tags found</h5>
+    <h5>{{ len(tags) }} tags found</h5>
     <div class="list-group">
         {%- for tag, num in tags.iteritems() %}
         <a href="{{ url_for('get_tag', tagname=tag) }}" class="list-group-item">{{ tag }}<span class="badge">{{ num }}</span></a>

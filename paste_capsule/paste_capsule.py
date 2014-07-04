@@ -60,11 +60,10 @@ def tag_show(tagname):
         return 'tag not found'
     pastes = [(k, pastes[k]) for k in sorted(pastes, key=pastes.get,
                                              reverse=True)]
-    return str(pastes)
     with r.pipeline() as pipe:
         for paste_uuid, ts in pastes:
             pipe.get(paste_uuid)
-            paste_text_list = pipe.execute()
+        paste_text_list = pipe.execute()
     color_list = [hilight(p) for p in paste_text_list]
     pastes = [(p[0], p[1], c) for p, c in zip(pastes, color_list)]
 

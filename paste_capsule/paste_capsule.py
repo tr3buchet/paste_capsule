@@ -132,7 +132,7 @@ def linky(resource, s, **kwargs):
 
 def htime(ts):
     return datetime.datetime.fromtimestamp(ts).strftime('%a %d %b %Y '
-                                                        '%H:%M:%S (%Z)')
+                                                        '%H:%M:%S (%z)')
 
 
 def url():

@@ -62,7 +62,7 @@ def tag_show(tagname):
                                              reverse=True)]
     with r.pipeline() as pipe:
         for paste_uuid, ts in pastes:
-            pipe.get(uuid)
+            pipe.get(paste_uuid)
             paste_text_list = pipe.execute()
     color_list = [hilight(p) for p in paste_text_list]
     pastes = [(p[0], p[1], c) for p, c in zip(pastes, color_list)]

@@ -83,7 +83,7 @@ def paste_create():
 
 def paste_show(paste_uuid):
     tagname = r.get('paste_tag:%s' % paste_uuid)
-    p = r.get('paste:%s' % paste_uuid)
+    p = unicode(r.get('paste:%s' % paste_uuid), 'utf8')
     return flask.render_template('paste_show.html', paste=p, tagname=tagname)
 #    return flask.Response(p, mimetype='text/plain')
 

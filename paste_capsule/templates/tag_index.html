@@ -25,10 +25,12 @@
 {%- endblock %}
 
 {% block content -%}
-    <h5>{{ tags|length }} tags found</h5>
-    <div class="list-group">
-        {%- for tag, num in tags.iteritems() %}
-        <a href="{{ url_for('tag_show', tagname=tag) }}" class="list-group-item">{{ tag }}<span class="badge">{{ num }}</span></a>
-        {%- endfor %}
+    <div class="container">
+        <h5>{{ tags|length }} tags found</h5>
+        <div class="list-group">
+            {%- for tag, num in tags.iteritems() %}
+            <a href="{{ url_for('tag_show', tagname=tag) }}" class="list-group-item">{{ tag }}<span class="badge">{{ num }}</span></a>
+            {%- endfor %}
+        </div>
     </div>
 {%- endblock %}

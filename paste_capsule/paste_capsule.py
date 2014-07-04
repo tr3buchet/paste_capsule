@@ -18,7 +18,6 @@ import redis
 import time
 import datetime
 import shortuuid
-import ConfigParser
 
 import flask
 import flask_appconfig
@@ -56,12 +55,7 @@ def tag_show(tagname):
     if not pastes:
         return 'tag not found'
     return flask.render_template('tag_show.html', tagname=tagname,
-                                                  pastes=pastes)
-    urls = [linky('paste', '%s - %s' % (htime(ts), paste_uuid),
-                  paste_uuid=paste_uuid)
-            for paste_uuid, ts in zip(paste_uuid_list, ts_list)]
-    return '%s pastes for %s:<br>\n%s' % (len(ts_list), tagname,
-                                          '<br>\n'.join(urls))
+                                 pastes=pastes)
 
 
 def paste_create():

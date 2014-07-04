@@ -39,6 +39,10 @@ r = redis.StrictRedis(unix_socket_path='/run/redis.sock', db=3)
 #    paste:<uuid>
 
 
+hilights = ['BOOM']
+hilight_color = 'pink'
+
+
 def tag_index():
     tag_list = r.zrange('tags', 0, -1)
     with r.pipeline() as pipe:
@@ -52,13 +56,26 @@ def tag_index():
 def tag_show(tagname):
     pastes = dict((k, htime(ts))
                   for k, ts in r.zscan('tag:%s' % tagname, 0)[1])
-    pastes = [(k, pastes[k]) for k in sorted(pastes, key=pastes.get,
-                                             reverse=True)]
     if not pastes:
         return 'tag not found'
+    pastes = [(k, pastes[k]) for k in sorted(pastes, key=pastes.get,
+                                             reverse=True)]
+    with r.pipeline() as pipe:
+        for paste_uuid, ts in pastes:
+            pipe.get(uuid)
+            paste_text_list = pipe.execute()
+    color_list = [hilight(p) for p in paste_text_list]
+    pastes = [(p[0], p[1], c) for p, c in zip(pastes, color_list)]
+
     return flask.render_template('tag_show.html', tagname=tagname,
                                  pastes=pastes)
 
+
+def hilight(paste):
+    for h in hilights:
+        if h in paste:
+            return hilight_color
+    return 'inherit'
 
 def paste_create():
     params = flask.request.get_json()

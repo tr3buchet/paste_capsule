@@ -134,7 +134,7 @@ def linky(resource, s, **kwargs):
 def htime(ts):
     return datetime.datetime.fromtimestamp(ts, pytz.utc).strftime('%a %d %b %Y'
                                                                   ' %H:%M:%S'
-                                                                  ' %Z (%z)')
+                                                                  ' %Z')
 
 
 def url():

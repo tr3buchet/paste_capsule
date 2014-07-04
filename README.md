@@ -25,17 +25,10 @@ mkvirtualenv /opt/paste_capsule
 python setup.py install
 ```
 
-### host configuration
-add the following to `/etc/paste_capsule.conf` but set your own hostname
-```
-[paste_capsule]
-hostname = host.name.com
-```
-
 ### nginx
 ```
 cp etc/nginx/sites-available/paste_capsule /etc/nginx/sites-available/paste_capsule
-# edit server_name in the server block to the hostname set in /etc/paste_capsule.conf
+# edit server_name in the server block to the hostname of the machine
 vi /etc/nginx/sites-available/paste_capsule
 ln -s /etc/nginx/sites-available/paste_capsule /etc/nginx/sites-enabled/paste_capsule
 # reload nginx config
@@ -48,6 +41,7 @@ cp etc/systemd/system/paste_capsule.socket /etc/systemd/system/paste_capsule.soc
 cp etc/systemd/system/paste_capsule.service /etc/systemd/system/paste_capsule.service
 
 # edit paste_capsule.service and set the user and group for permissions
+# also set the PASTE_CAPSULE_HOSTNAME to the same value in the nginx config
 vi /etc/systemd/system/paste_capsule.service
 
 # enable and start the socket

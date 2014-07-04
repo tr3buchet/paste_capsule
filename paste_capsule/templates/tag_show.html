@@ -14,11 +14,14 @@
 
 {% block title %}paste capsule - {{ tagname }}{% endblock %}
 {% block navbar -%}
-    <div class="navbar navbar-fixed-top">
-        <ol class="breadcrumb">
-            <li><a href="{{ url_for('tag_index') }}">home</a></li>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <ul class="navbar-left breadcrumb" style="background:inherit">
+            <li><a href="{{ url_for('tag_index') }}">tag index</a></li>
             <li class="active">{{ tagname }}</li>
-        </ol>
+        </ul>
+        <ul class="nav navbar-right">
+            <li><a class="navbar-brand" href="https://github.com/tr3buchet/paste_capsule">paste capsule</a></li>
+        </ul>
     </div>
 {%- endblock %}
 

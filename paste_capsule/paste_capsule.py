@@ -82,12 +82,17 @@ def paste_create():
     return url() + flask.url_for('paste_show', paste_uuid=paste_uuid)
 
 
-def paste_show(paste_uuid):
+def paste_show_pretty(paste_uuid):
     tagname = r.get('paste_tag:%s' % paste_uuid)
     p = unicode(r.get('paste:%s' % paste_uuid), 'utf8')
     return flask.render_template('paste_show.html', paste_uuid=paste_uuid,
                                  paste=p, tagname=tagname)
 #    return flask.Response(p, mimetype='text/plain')
+
+
+def paste_show(paste_uuid):
+    p = r.get('paste:%s' % paste_uuid)
+    return flask.Response(p, mimetype='text/plain')
 
 
 def delete_paste(paste_uuid):
@@ -126,7 +131,8 @@ def linky(resource, s, **kwargs):
 
 
 def htime(ts):
-    return datetime.datetime.fromtimestamp(ts).strftime('%c')
+    return datetime.datetime.fromtimestamp(ts).strftime('%a %d %b %Y '
+                                                        '%H:%M:%S (%Z)')
 
 
 def url():

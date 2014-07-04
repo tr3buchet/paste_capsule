@@ -25,7 +25,7 @@
 {% block content -%}
     <h5>{{ pastes|length }} pastes found</h5>
     <div class="list-group">
-        {%- for paste_uuid, ts in pastes.iteritems() %}
+        {%- for paste_uuid, ts in pastes %}
         <a href="{{ url_for('paste_show', paste_uuid=paste_uuid) }}" class="list-group-item">{{ ts }} - {{ paste_uuid }}<span class="badge">{{ num }}</span></a>
         {%- endfor %}
     </div>

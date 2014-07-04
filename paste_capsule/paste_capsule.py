@@ -51,7 +51,8 @@ def tag_index():
 def tag_show(tagname):
     pastes = dict((k, htime(ts))
                   for k, ts in r.zscan('tag:%s' % tagname, 0)[1])
-    print pastes
+    pastes = [(k, pastes[k]) for k in sorted(pastes, key=pastes.get,
+                                             reverse=True)
     if not pastes:
         return 'tag not found'
     return flask.render_template('tag_show.html', tagname=tagname,
@@ -125,7 +126,7 @@ def linky(resource, s, **kwargs):
 
 
 def htime(ts):
-    return datetime.datetime.fromtimestamp(ts)
+    return datetime.datetime.fromtimestamp(ts).strftime('%c')
 
 
 def url():

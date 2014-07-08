@@ -9,6 +9,12 @@
 {{ super() }}
     <style>
         @media (min-width: 981px) { body { padding-top: 60px; } }
+        .list-group > a.highlight {
+            background-color: pink;
+        }
+        .list-group > a.highlight:hover {
+            background-color: #cc9aa2;
+        }
     </style>
 {%- endblock %}
 
@@ -29,8 +35,8 @@
     <div class="container">
         <h5>{{ pastes|length }} pastes found</h5>
         <div class="list-group">
-            {%- for paste_uuid, ts, color in pastes %}
-            <a href="{{ url_for('paste_show', paste_uuid=paste_uuid) }}" class="list-group-item" style="background:{{ color }}">{{ ts }} - {{ paste_uuid }}<span class="badge">{{ num }}</span></a>
+            {%- for paste_uuid, ts, highlight in pastes %}
+            <a href="{{ url_for('paste_show', paste_uuid=paste_uuid) }}" class="list-group-item {{ highlight }}">{{ ts }} - {{ paste_uuid }}<span class="badge">{{ num }}</span></a>
             {%- endfor %}
         </div>
     </div>

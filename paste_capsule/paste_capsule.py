@@ -172,8 +172,8 @@ def create_app(debug=False, *args, **kwargs):
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
     app.add_url_rule('/tag/<tagname>', 'tag_show', tag_show, methods=['get'])
     app.add_url_rule('/paste', 'paste_create', paste_create, methods=['post'])
-    app.add_url_rule('/paste/<paste_uuid>', 'paste_show_pretty',
-                     paste_show_pretty, methods=['get'])
+    app.add_url_rule('/paste/<paste_uuid>', 'paste_show',
+                     paste_show, methods=['get'])
     app.add_url_rule('/paste/<paste_uuid>/raw', 'paste_show_raw',
                      paste_show_raw, methods=['get'])
     app.add_url_rule('/paste/<paste_uuid>', 'delete_paste', delete_paste,

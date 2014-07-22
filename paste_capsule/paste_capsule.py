@@ -77,6 +77,7 @@ def highlight(paste):
             return 'highlight'
     return ''
 
+
 def paste_create():
     params = flask.request.get_json()
     data = params['data']
@@ -100,7 +101,7 @@ def paste_create():
     return url() + flask.url_for('paste_show', paste_uuid=paste_uuid)
 
 
-def paste_show_pretty(paste_uuid):
+def paste_show(paste_uuid):
     tagname = r.get('paste_tag:%s' % paste_uuid)
     p = unicode(r.get('paste:%s' % paste_uuid), 'utf8')
     return flask.render_template('paste_show.html', paste_uuid=paste_uuid,
@@ -108,7 +109,7 @@ def paste_show_pretty(paste_uuid):
 #    return flask.Response(p, mimetype='text/plain')
 
 
-def paste_show(paste_uuid):
+def paste_show_raw(paste_uuid):
     p = r.get('paste:%s' % paste_uuid)
     return flask.Response(p, mimetype='text/plain')
 
@@ -171,8 +172,10 @@ def create_app(debug=False, *args, **kwargs):
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
     app.add_url_rule('/tag/<tagname>', 'tag_show', tag_show, methods=['get'])
     app.add_url_rule('/paste', 'paste_create', paste_create, methods=['post'])
-    app.add_url_rule('/paste/<paste_uuid>', 'paste_show', paste_show,
-                     methods=['get'])
+    app.add_url_rule('/paste/<paste_uuid>', 'paste_show_pretty',
+                     paste_show_pretty, methods=['get'])
+    app.add_url_rule('/paste/<paste_uuid>/raw', 'paste_show_raw',
+                     paste_show_raw, methods=['get'])
     app.add_url_rule('/paste/<paste_uuid>', 'delete_paste', delete_paste,
                      methods=['delete'])
     return app

@@ -18,7 +18,7 @@
         <ul class="navbar-left breadcrumb" style="background:inherit">
             <li><a href="{{ url_for('tag_index') }}">home</a></li>
             <li><a href="{{ url_for('tag_show', tagname=tagname) }}">{{ tagname }}</a></li>
-            <li class="active">{{ paste_uuid }}</li>
+            <li class="active">{{ paste_uuid }} (<a href="{{ url_for('paste_show_raw', paste_uuid=paste_uuid) }}">raw</a>)</li>
         </ul>
         <ul class="nav navbar-right">
             <li><a class="navbar-brand" href="https://github.com/tr3buchet/paste_capsule">paste capsule</a></li>
@@ -27,7 +27,9 @@
 {%- endblock %}
 
 {% block content -%}
-    <pre>
+    <div class="container">
+        <pre style="overflow: auto; word-wrap: normal; white-space: pre">
 {{ paste }}
-    </pre>
+        </pre>
+    </div>
 {%- endblock %}

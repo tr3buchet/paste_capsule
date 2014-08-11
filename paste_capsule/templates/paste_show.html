@@ -16,7 +16,7 @@
 {% block navbar -%}
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <ul class="navbar-left breadcrumb" style="background:inherit">
-            <li><a href="{{ url_for('tag_index') }}">home</a></li>
+            <li><a href="{{ url_for('tag_index') }}">tag index</a></li>
             <li><a href="{{ url_for('tag_show', tagname=tagname) }}">{{ tagname }}</a></li>
             <li class="active">{{ paste_uuid }} (<a href="{{ url_for('paste_show_raw', paste_uuid=paste_uuid) }}">raw</a>)</li>
         </ul>

@@ -54,12 +54,12 @@ def tag_index():
 
 
 def tag_show(tagname):
-    pastes = dict((k, htime(ts))
+    pastes = dict((k, ts)
                   for k, ts in r.zscan('tag:%s' % tagname, 0)[1])
     if not pastes:
         return 'tag not found'
-    pastes = [(k, pastes[k]) for k in sorted(pastes, key=pastes.get,
-                                             reverse=True)]
+    pastes = [(k, htime(pastes[k])) for k in sorted(pastes, key=pastes.get,
+                                                    reverse=True)]
     with r.pipeline() as pipe:
         for paste_uuid, ts in pastes:
             pipe.get('paste:%s' % paste_uuid)

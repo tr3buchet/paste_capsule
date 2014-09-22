@@ -97,6 +97,9 @@ cp etc/systemd/system/paste_capsule.service /etc/systemd/system/paste_capsule.se
 # also set the PASTE_CAPSULE_DATABASE to your sql database connection with user/pass from sql user
 vi /etc/systemd/system/paste_capsule.service
 
+# reload the systemd daemon
+systemctl daemon-reload
+
 # enable and start the socket
 systemctl enable paste_capsule.socket
 systemctl start paste_capsule.socket

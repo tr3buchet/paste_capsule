@@ -23,7 +23,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from sqlalchemy import desc
 
-DATABASE = 'mysql://pc:d0ngs@127.0.0.1/paste_capsule'
+DATABASE = 'mysql://pc:d0ngs@127.0.0.1/paste_capsule?charset=utf8'
 db = SQLAlchemy()
 
 
@@ -122,7 +122,7 @@ def create_app(debug=False, *args, **kwargs):
     @app.context_processor
     def utility_processor():
         def htime(ts):
-            ts.strftime('%a %d %b %Y %H:%M:%S %Z')
+            return ts.strftime('%a %d %b %Y %H:%M:%S %Z')
         return dict(htime=htime)
 
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])

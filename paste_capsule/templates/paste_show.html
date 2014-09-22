@@ -12,13 +12,13 @@
     </style>
 {%- endblock %}
 
-{% block title %}paste capsule - {{ tagname }} - {{ paste_uuid }}{% endblock %}
+{% block title %}paste capsule - {{ paste.tag }} - {{ paste.id }}{% endblock %}
 {% block navbar -%}
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <ul class="navbar-left breadcrumb" style="background:inherit">
             <li><a href="{{ url_for('tag_index') }}">tag index</a></li>
-            <li><a href="{{ url_for('tag_show', tagname=tagname) }}">{{ tagname }}</a></li>
-            <li class="active">{{ paste_uuid }} (<a href="{{ url_for('paste_show_raw', paste_uuid=paste_uuid) }}">raw</a>)</li>
+            <li><a href="{{ url_for('tag_show', tag=paste.tag) }}">{{ paste.tag }}</a></li>
+            <li class="active">{{ paste.id }} (<a href="{{ url_for('paste_show_raw', paste_id=paste.id) }}">raw</a>)</li>
         </ul>
         <ul class="nav navbar-right">
             <li><a class="navbar-brand" href="https://github.com/tr3buchet/paste_capsule">paste capsule</a></li>

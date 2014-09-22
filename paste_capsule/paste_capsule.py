@@ -14,29 +14,30 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-import redis
-import time
 import datetime
-import shortuuid
-import pytz
 
 import flask
 import flask_appconfig
 import flask_bootstrap
+from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy import func
+from sqlalchemy import desc
 
-r = redis.StrictRedis(unix_socket_path='/run/redis.sock', db=3)
+DATABASE = 'mysql://pc:d0ngs@127.0.0.1/paste_capsule'
+db = SQLAlchemy()
 
-###### REDIS SCHEMA ######
-# lexicographically sorted set of tags
-#    tags
-# time sorted set of paste uuids with tag
-#    tag:<tagname>
-# time sorted set of pastes (for sorting in tag view and reaping later)
-#    pastes
-# paste -> tag map for each paste (for reaping from tag:<tagname>)
-#    paste_tag:<uuid>
-# each paste
-#    paste:<uuid>
+
+class Paste(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.String(255), index=True, nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, tag, text, created_at=None):
+        self.tag = tag
+        self.text = text
+        if created_at is None:
+            self.created_at = datetime.datetime.utcnow()
 
 
 highlights = ['BOOM']
@@ -44,30 +45,22 @@ highlight_color = 'pink'
 
 
 def tag_index():
-    tag_list = r.zrange('tags', 0, -1)
-    with r.pipeline() as pipe:
-        for tag in tag_list:
-            pipe.zcard('tag:%s' % tag)
-        tag_num_list = pipe.execute()
-    tags = dict(zip(tag_list, tag_num_list))
+    q = db.session.query
+    tags = q(Paste.tag, func.count(Paste.id)).group_by(Paste.tag).\
+        order_by(desc(Paste.tag)).all()
     return flask.render_template('tag_index.html', tags=tags)
 
 
-def tag_show(tagname):
-    pastes = dict((k, ts)
-                  for k, ts in r.zscan('tag:%s' % tagname, 0)[1])
+def tag_show(tag):
+    pastes = Paste.query.filter(Paste.tag == tag).\
+        order_by(desc(Paste.created_at)).all()
     if not pastes:
         return 'tag not found'
-    pastes = [(k, htime(pastes[k])) for k in sorted(pastes, key=pastes.get,
-                                                    reverse=True)]
-    with r.pipeline() as pipe:
-        for paste_uuid, ts in pastes:
-            pipe.get('paste:%s' % paste_uuid)
-        paste_text_list = pipe.execute()
-    highlight_list = [highlight(p) for p in paste_text_list]
-    pastes = [(p[0], p[1], hl) for p, hl in zip(pastes, highlight_list)]
+    # NOTE(tr3buchet): get the highlights
+    highlight_list = [highlight(p.text) for p in pastes]
+    pastes = [(p, hl) for p, hl in zip(pastes, highlight_list)]
 
-    return flask.render_template('tag_show.html', tagname=tagname,
+    return flask.render_template('tag_show.html', tag=tag,
                                  pastes=pastes)
 
 
@@ -80,68 +73,27 @@ def highlight(paste):
 
 def paste_create():
     params = flask.request.get_json()
-    data = params['data']
-    tagname = params.get('tag', 'no-tag')
-    paste_uuid = shortuuid.uuid()
-    ts = time.time()
+    p = Paste(tag=params.get('tag', 'no-tag'), text=params['data'])
+    db.session.add(p)
+    db.session.commit()
 
-    with r.pipeline() as pipe:
-        # add tagname to lexicographically sorted tags set
-        pipe.zadd('tags', 1, tagname)
-        # add paste uuid to this tag's time sorted set
-        pipe.zadd('tag:%s' % tagname, ts, paste_uuid)
-        # add paste uuid to the time sorted pastes set
-        pipe.zadd('pastes', ts, paste_uuid)
-        # add paste_uuid -> tagname mapping
-        pipe.set('paste_tag:%s' % paste_uuid, tagname)
-        # add the paste
-        pipe.set('paste:%s' % paste_uuid, data)
-        pipe.execute()
-
-    return url() + flask.url_for('paste_show', paste_uuid=paste_uuid)
+    return url() + flask.url_for('paste_show', paste_id=p.id)
 
 
-def paste_show(paste_uuid):
-    tagname = r.get('paste_tag:%s' % paste_uuid)
-    p = unicode(r.get('paste:%s' % paste_uuid), 'utf8')
-    return flask.render_template('paste_show.html', paste_uuid=paste_uuid,
-                                 paste=p, tagname=tagname)
-#    return flask.Response(p, mimetype='text/plain')
+def paste_show(paste_id):
+    p = Paste.query.get(paste_id)
+    return flask.render_template('paste_show.html', paste=p)
+#    return flask.Response(p.text, mimetype='text/plain')
 
 
-def paste_show_raw(paste_uuid):
-    p = r.get('paste:%s' % paste_uuid)
-    return flask.Response(p, mimetype='text/plain')
+def paste_show_raw(paste_id):
+    p = Paste.query.get(paste_id)
+    return flask.Response(p.text, mimetype='text/plain')
 
 
-def delete_paste(paste_uuid):
-    # get the tagname info related to this paste_uuid
-    tagname = r.get('paste_tag:%s' % paste_uuid)
-    num_pastes = r.zcard('tag:%s' % tagname)
-    msg = 'delete |%s| with tag |%s| which has |%s| pastes'
-    with r.pipeline() as pipe:
-        # remove paste_uuid from tag's set of paste_uuids
-        pipe.zrem('tag:%s' % tagname, paste_uuid)
-        # remove paste_uuid from the time sorted pastes set
-        pipe.zrem('pastes', paste_uuid)
-        # remove paste_uuid from the paste_uuid -> tagname mapping
-        pipe.delete('paste_tag:%s' % paste_uuid)
-        # delete the paste itself
-        pipe.delete('paste:%s' % paste_uuid)
-
-        # if the tagname no longer has any associated paste,
-        # remove it from the tags set
-        if num_pastes <= 1:
-            pipe.zrem('tags', tagname)
-        x = pipe.execute()
-
-    msg = ('remove paste uuid from tag |%s|\n'
-           'remove paste uuid from pastes set |%s|\n'
-           'remove paste uuid from paste_tag mapping |%s|\n'
-           'remove the paste |%s|\n')
-    if len(x) == 5:
-        msg += 'remove tagname from tags |%s|'
-    return '|%s| deleted' % paste_uuid
+def delete_paste(paste_id):
+    Paste.query.get(paste_id).delete()
+    return '|%s| deleted' % paste_id
 
 
 def linky(resource, s, **kwargs):
@@ -149,10 +101,11 @@ def linky(resource, s, **kwargs):
                                       flask.url_for(resource, **kwargs), s)
 
 
-def htime(ts):
-    return datetime.datetime.fromtimestamp(ts, pytz.utc).strftime('%a %d %b %Y'
-                                                                  ' %H:%M:%S'
-                                                                  ' %Z')
+@app.context_processor
+def utility_processor():
+    def htime(ts):
+        ts.strftime('%a %d %b %Y %H:%M:%S %Z')
+    return dict(htime=htime)
 
 
 def url():
@@ -165,18 +118,22 @@ def url():
 
 def create_app(debug=False, *args, **kwargs):
     app = flask.Flask('paste_capsule')
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
     app.debug = debug
     flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)
 
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
-    app.add_url_rule('/tag/<tagname>', 'tag_show', tag_show, methods=['get'])
+    app.add_url_rule('/tag/<tag>', 'tag_show', tag_show, methods=['get'])
     app.add_url_rule('/paste', 'paste_create', paste_create, methods=['post'])
-    app.add_url_rule('/paste/<paste_uuid>', 'paste_show',
+    app.add_url_rule('/paste/<paste_id>', 'paste_show',
                      paste_show, methods=['get'])
-    app.add_url_rule('/paste/<paste_uuid>/raw', 'paste_show_raw',
+    app.add_url_rule('/paste/<paste_id>/raw', 'paste_show_raw',
                      paste_show_raw, methods=['get'])
-    app.add_url_rule('/paste/<paste_uuid>', 'delete_paste', delete_paste,
+    app.add_url_rule('/paste/<paste_id>', 'delete_paste', delete_paste,
                      methods=['delete'])
     return app
 

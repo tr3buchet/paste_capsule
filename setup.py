@@ -19,13 +19,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='paste_capsule',
-    version='1.0.0',
+    version='1.1.0',
     author='Trey Morris',
     author_email='trey@treymorris.com',
     description='paste capsule for storing pastes associatd with tags',
     long_description=open('README.md').read(),
-    install_requires=['redis', 'shortuuid', 'gunicorn', 'gevent', 'pytz',
-                      'flask', 'flask-appconfig', 'flask-bootstrap'],
+    install_requires=['gunicorn', 'gevent',
+                      'flask', 'flask-appconfig', 'flask-bootstrap',
+                      'flask-sqlalchemy', 'mysql-python'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'License :: OSI Approved :: Apache Software License'],
     keywords='gist gists paste pastes capsule',

@@ -110,7 +110,6 @@ def url():
 
 def create_app(debug=False, *args, **kwargs):
     app = flask.Flask('paste_capsule')
-    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['DATABASE']
     app.debug = debug
     flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)

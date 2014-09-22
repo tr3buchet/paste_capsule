@@ -1,13 +1,19 @@
 [Unit]
 Description=gunicorn daemon for paste_capsule
+Requires=paste_capsule.socket
+After=network.target
 
 [Service]
-Type=forking
-PIDFile=/opt/paste_capsule/paste_capsule.pid
+PIDFile=/run/paste_capsule/pid
 User=www-data
 Group=www-data
+WorkingDirectory=/opt/paste_capsule
 # Environment="VAR1=word1 word2" VAR2=word3 "VAR3=$word 5 6"
-Environment=PASTE_CAPSULE_HOSTNAME=host.name.com
+Environment="PASTE_CAPSULE_HOSTNAME=host.name.com" "PASTE_CAPSULE_DATABASE=mysql://user:password@127.0.0.1/paste_capsule"
 ExecStart=/opt/paste_capsule/bin/gunicorn -k gevent --error-logfile - --access-logfile - -p /opt/paste_capsule/paste_capsule.pid 'paste_capsule.paste_capsule:create_app()'
 ExecReload=/bin/kill -s HUP $MAINPID
-ExecStop=/bin/kill -s QUIT $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

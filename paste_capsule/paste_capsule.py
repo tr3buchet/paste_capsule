@@ -23,7 +23,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from sqlalchemy import desc
 
-DATABASE = 'mysql://pc:d0ngs@127.0.0.1/paste_capsule?charset=utf8'
 db = SQLAlchemy()
 
 
@@ -111,7 +110,7 @@ def url():
 
 def create_app(debug=False, *args, **kwargs):
     app = flask.Flask('paste_capsule')
-    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
+    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['DATABASE']
     db.init_app(app)
     with app.app_context():
         db.create_all()

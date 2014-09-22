@@ -2,7 +2,9 @@
 Description=gunicorn socket for paste_capsule
 
 [Socket]
-ListenStream=/run/paste_capsule.sock
+ListenStream=/run/paste_capsule/socket
+#ListenStream=0.0.0.0:9000
+#ListenStream=[::]:8000
 
 [Install]
 WantedBy=sockets.target

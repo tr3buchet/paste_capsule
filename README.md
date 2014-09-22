@@ -94,7 +94,7 @@ cp etc/systemd/system/paste_capsule.service /etc/systemd/system/paste_capsule.se
 
 # edit paste_capsule.service and set the user and group for permissions
 # also set the PASTE_CAPSULE_HOSTNAME to the same value in the nginx config
-# also set the PASTE_CAPSULE_DATABASE to your sql database connection with user/pass from sql user
+# also set the PASTE_CAPSULE_SQLALCHEMY_DATABASE_URI to your sql database connection with user/pass from sql user
 vi /etc/systemd/system/paste_capsule.service
 
 # reload the systemd daemon

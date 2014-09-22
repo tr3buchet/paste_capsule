@@ -77,11 +77,6 @@ cp etc/tmpfiles.d/paste_capsule.conf /etc/tmpfiles.d/paste_capsule.conf
 systemd-tmpfiles --create /etc/tmpfiles.d/paste_capsule.conf
 ```
 
-### permissions
-make sure the user/group you set up in `/etc/systemd/system/paste_capsule.service` has
-rwx permissions on `/opt/paste_capsule`
-
-
 ### nginx
 ```
 cp etc/nginx/sites-available/paste_capsule /etc/nginx/sites-available/paste_capsule
@@ -107,3 +102,6 @@ systemctl enable paste_capsule.socket
 systemctl start paste_capsule.socket
 ```
 
+### permissions
+make sure the user/group you set up in `/etc/systemd/system/paste_capsule.service` has
+rwx permissions on `/opt/paste_capsule`

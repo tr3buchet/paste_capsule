@@ -101,13 +101,6 @@ def linky(resource, s, **kwargs):
                                       flask.url_for(resource, **kwargs), s)
 
 
-@app.context_processor
-def utility_processor():
-    def htime(ts):
-        ts.strftime('%a %d %b %Y %H:%M:%S %Z')
-    return dict(htime=htime)
-
-
 def url():
     app = flask.current_app
     try:
@@ -125,6 +118,12 @@ def create_app(debug=False, *args, **kwargs):
     app.debug = debug
     flask_appconfig.AppConfig(app)
     flask_bootstrap.Bootstrap(app)
+
+    @app.context_processor
+    def utility_processor():
+        def htime(ts):
+            ts.strftime('%a %d %b %Y %H:%M:%S %Z')
+        return dict(htime=htime)
 
     app.add_url_rule('/', 'tag_index', tag_index, methods=['get'])
     app.add_url_rule('/tag/<tag>', 'tag_show', tag_show, methods=['get'])

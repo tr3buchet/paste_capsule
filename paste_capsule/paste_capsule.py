@@ -47,7 +47,7 @@ def tag_index():
     q = db.session.query
     tags = q(Paste.tag, func.count(Paste.id)).group_by(Paste.tag).\
         order_by(Paste.tag).all()
-    num_pastes = q(func.count(Paste.id)).first()
+    num_pastes = q(func.count(Paste.id)).first()[0] if tags else 0
     return flask.render_template('tag_index.html', tags=tags,
                                  num_pastes=num_pastes)
 

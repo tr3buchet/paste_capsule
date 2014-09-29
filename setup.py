@@ -24,7 +24,7 @@ setup(
     author_email='trey@treymorris.com',
     description='paste capsule for storing pastes associatd with tags',
     long_description=open('README.md').read(),
-    install_requires=['gunicorn', 'gevent',
+    install_requires=['gunicorn', 'gevent', 'datetime',
                       'flask', 'flask-appconfig', 'flask-bootstrap',
                       'flask-sqlalchemy', 'mysql-python'],
     classifiers=['Development Status :: 5 - Production/Stable',

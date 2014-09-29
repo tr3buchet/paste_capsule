@@ -29,7 +29,7 @@ db = SQLAlchemy()
 class Paste(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tag = db.Column(db.String(255), index=True, nullable=False)
-    text = db.Column(db.Text, nullable=False)
+    text = db.Column(db.LongText, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
 
     def __init__(self, tag, text, created_at=None):

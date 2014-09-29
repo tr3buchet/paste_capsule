@@ -20,6 +20,7 @@ import flask
 import flask_appconfig
 import flask_bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy import func
 from sqlalchemy import desc
 
@@ -29,7 +30,7 @@ db = SQLAlchemy()
 class Paste(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tag = db.Column(db.String(255), index=True, nullable=False)
-    text = db.Column(db.LongText, nullable=False)
+    text = db.Column(LONGTEXT, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
 
     def __init__(self, tag, text, created_at=None):
